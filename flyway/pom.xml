@@ -35,7 +35,7 @@
                     <execution>
                         <id>db1</id>
                         <configuration>
-                            <locations>filesystem:/src/main/resources/db/migrations/</locations>
+                            <locations>filesystem:/src/main/resources/db/migration/</locations>
                             <url>jdbc:mysql://localhost:3307/spring_security_course</url>
                             <user>root</user>
                             <password>root</password>
