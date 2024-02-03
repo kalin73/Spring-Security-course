@@ -1,12 +1,17 @@
 package org.example.seccourse.security;
 
 import org.example.seccourse.repository.UserRepository;
-import org.example.seccourse.model.enums.Role;
+
+import static org.example.seccourse.model.enums.Permissions.*;
+import static org.example.seccourse.model.enums.Role.*;
+
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,9 +26,14 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/api/v1/addStudent").permitAll()
-                        .requestMatchers("/api/v1/students").hasRole(Role.ADMIN.name())
-                        .anyRequest().authenticated());
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/api/**").hasRole(STUDENT.name())
+                        .requestMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.name())
+                        .requestMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.name())
+                        .requestMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.name())
+                        .requestMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+                        .anyRequest().authenticated())
+                .csrf(CsrfConfigurer::disable);
 
         return httpSecurity.build();
     }
@@ -33,16 +43,22 @@ public class SecurityConfiguration {
         UserDetails student = User.builder()
                 .username("Kalin")
                 .password(passwordEncoder().encode("123"))
-                .roles("STUDENT")
+                .roles(STUDENT.name())
                 .build();
 
         UserDetails admin = User.builder()
                 .username("Admin")
                 .password(passwordEncoder().encode("123"))
-                .roles("ADMIN")
+                .roles(ADMIN.name())
                 .build();
 
-        return new InMemoryUserDetailsManager(student, admin);
+        UserDetails adminT = User.builder()
+                .username("AdminT")
+                .password(passwordEncoder().encode("123"))
+                .roles(ADMINTRAINEE.name())
+                .build();
+
+        return new InMemoryUserDetailsManager(student, admin, adminT);
 
 //        return new AuthenticationUserService(userRepository);
     }

@@ -2,11 +2,11 @@ package org.example.seccourse.web.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.example.seccourse.model.dto.StudentDto;
-import org.example.seccourse.model.dto.StudentRegisterForm;
 import org.example.seccourse.service.UserService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -14,19 +14,10 @@ import java.util.List;
 public class StudentsController {
     private final UserService userService;
 
-
-    @GetMapping("/students")
-    public List<StudentDto> getAllStudents() {
-        return this.userService.getAllStudents();
-    }
-
     @GetMapping("/students/{id}")
-    public StudentRegisterForm getStudentById(@PathVariable(name = "id") int id) {
-        return null;
+    public StudentDto getStudentById(@PathVariable(name = "id") Long id) {
+        return this.userService.getStudentById(id);
     }
 
-    @GetMapping("/addStudent")
-    public String addStudent(@RequestBody StudentRegisterForm student) {
-        return this.userService.addStudent(student);
-    }
+
 }

@@ -29,9 +29,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles;
 
+    public void addRole(RoleEntity role) {
+        this.roles.add(role);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(r -> new SimpleGrantedAuthority("ROLE_" + r.getRole().name())).toList();
+        return roles;
     }
 
     @Override

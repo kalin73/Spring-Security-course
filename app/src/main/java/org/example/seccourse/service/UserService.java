@@ -8,6 +8,7 @@ import org.example.seccourse.model.entity.UserEntity;
 import org.example.seccourse.repository.RoleRepository;
 import org.example.seccourse.repository.UserRepository;
 import org.example.seccourse.model.enums.Role;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +47,27 @@ public class UserService {
                         .anyMatch(r -> r.getRole().name().equals("STUDENT")))
                 .map(StudentDto::mapToStudentDto)
                 .toList();
+    }
+
+    public StudentDto getStudentById(Long id) {
+        return this.userRepository.findById(id)
+                .map(StudentDto::mapToStudentDto)
+                .orElseThrow(() -> new UsernameNotFoundException("Student with ID: " + id + " does not exist!"));
+    }
+
+    public String deleteStudentById(Long id) {
+        this.userRepository.deleteById(id);
+
+        return "Student was deleted successfully!";
+    }
+
+    public String updateStudentById(Long id, StudentDto studentDto) {
+        UserEntity user = this.userRepository.findById(id).orElseThrow();
+
+        user.setUsername(studentDto.username());
+
+        this.userRepository.save(user);
+
+        return "Student was updated successfully!";
     }
 }
