@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.seccourse.utils.Role;
+import org.example.seccourse.model.enums.Role;
 
 @Entity
 @Table(name = "roles")

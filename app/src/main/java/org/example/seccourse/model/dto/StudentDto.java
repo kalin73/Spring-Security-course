@@ -1,4 +1,9 @@
 package org.example.seccourse.model.dto;
 
-public record StudentDto(String username, String password) {
+import org.example.seccourse.model.entity.UserEntity;
+
+public record StudentDto(Long id, String username) {
+    public static StudentDto mapToStudentDto(UserEntity userEntity) {
+        return new StudentDto(userEntity.getId(), userEntity.getUsername());
+    }
 }

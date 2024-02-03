@@ -2,11 +2,11 @@ package org.example.seccourse.web.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.example.seccourse.model.dto.StudentDto;
+import org.example.seccourse.model.dto.StudentRegisterForm;
 import org.example.seccourse.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -17,16 +17,16 @@ public class StudentsController {
 
     @GetMapping("/students")
     public List<StudentDto> getAllStudents() {
-        return null;
+        return this.userService.getAllStudents();
     }
 
     @GetMapping("/students/{id}")
-    public StudentDto getStudentById(@PathVariable(name = "id") int id) {
+    public StudentRegisterForm getStudentById(@PathVariable(name = "id") int id) {
         return null;
     }
 
     @GetMapping("/addStudent")
-    public String addStudent(@RequestBody StudentDto student) {
+    public String addStudent(@RequestBody StudentRegisterForm student) {
         return this.userService.addStudent(student);
     }
 }
