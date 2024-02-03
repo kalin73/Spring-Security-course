@@ -1,4 +1,4 @@
 package org.example.seccourse.model.dto;
 
-public record StudentDto(int studentId, String name) {
+public record StudentDto(String username, String password) {
 }
