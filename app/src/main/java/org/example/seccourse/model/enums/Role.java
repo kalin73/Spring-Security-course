@@ -11,7 +11,10 @@ public enum Role {
     ADMIN(Sets.newHashSet(Permissions.COURSE_READ,
             Permissions.COURSE_WRITE,
             Permissions.STUDENT_READ,
-            Permissions.STUDENT_WRITE));
+            Permissions.STUDENT_WRITE)),
+
+    ADMINTRAINEE(Sets.newHashSet(Permissions.COURSE_READ,
+          Permissions.STUDENT_READ));
 
     private final Set<Permissions> permissions;
 
