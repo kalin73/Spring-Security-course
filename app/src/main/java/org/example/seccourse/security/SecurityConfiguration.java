@@ -1,6 +1,7 @@
 package org.example.seccourse.security;
 
 import org.example.seccourse.repository.UserRepository;
+import org.example.seccourse.service.AuthenticationUserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static org.example.seccourse.model.enums.Role.*;
 
@@ -32,7 +34,7 @@ public class SecurityConfiguration {
 //                        .requestMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
 //                        .requestMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
                         .anyRequest().authenticated())
-                .csrf(CsrfConfigurer::disable);
+                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
         return httpSecurity.build();
     }
@@ -60,9 +62,9 @@ public class SecurityConfiguration {
                 .authorities(ADMINTRAINEE.getGrantedAuthorities())
                 .build();
 
-        return new InMemoryUserDetailsManager(student, admin, adminT);
+        //return new InMemoryUserDetailsManager(student, admin, adminT);
 
-//        return new AuthenticationUserService(userRepository);
+        return new AuthenticationUserService(userRepository);
     }
 
     @Bean
