@@ -2,7 +2,6 @@ package org.example.seccourse.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +21,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private static final String SECRET_KEY = System.getenv("jwt_key");
+    private final JwtConfig jwtConfig;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -52,10 +51,10 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
+                .signWith(jwtConfig.getKey())
                 .compact();
 
 
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("Authorization", jwtConfig.getTokenPrefix() + token);
     }
 }

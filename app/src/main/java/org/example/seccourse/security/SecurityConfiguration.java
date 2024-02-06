@@ -1,6 +1,8 @@
 package org.example.seccourse.security;
 
 import lombok.RequiredArgsConstructor;
+import org.example.seccourse.jwt.JwtConfig;
+import org.example.seccourse.jwt.JwtTokenVerifier;
 import org.example.seccourse.jwt.JwtUsernamePasswordAuthenticationFilter;
 import org.example.seccourse.repository.UserRepository;
 import org.example.seccourse.service.AuthenticationUserService;
@@ -13,7 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +28,9 @@ import static org.example.seccourse.model.enums.Role.STUDENT;
 public class SecurityConfiguration {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration config) throws Exception {
-        httpSecurity.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(config)))
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration config, JwtConfig jwtConfig) throws Exception {
+        httpSecurity.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(config), jwtConfig))
+                .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/", "/login").permitAll()
                         .requestMatchers("/api/**").hasRole(STUDENT.name())
