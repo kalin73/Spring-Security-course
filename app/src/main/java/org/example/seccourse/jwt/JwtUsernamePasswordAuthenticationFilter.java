@@ -15,7 +15,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Date;
 
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         String token = Jwts.builder().setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
+                .setExpiration(jwtConfig.getTokenExpirationDate())
                 .signWith(jwtConfig.getKey())
                 .compact();
 

@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 
 import javax.crypto.SecretKey;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @ConfigurationProperties(prefix = "application.jwt")
 @Configuration
@@ -16,6 +18,7 @@ import javax.crypto.SecretKey;
 public class JwtConfig {
     private String secretKey;
     private String tokenPrefix;
+    private Integer tokenExpirationInDays;
 
     public SecretKey getKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
@@ -23,5 +26,9 @@ public class JwtConfig {
 
     public String getAuthorizationHeader() {
         return HttpHeaders.AUTHORIZATION;
+    }
+
+    public Date getTokenExpirationDate() {
+        return Date.valueOf(LocalDate.now().plusDays(tokenExpirationInDays));
     }
 }
