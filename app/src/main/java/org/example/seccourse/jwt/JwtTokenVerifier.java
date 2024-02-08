@@ -1,7 +1,6 @@
 package org.example.seccourse.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
@@ -36,11 +35,11 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         final String token = authorizationHeader.substring(7);
 
         try {
-            final Jws<Claims> claimsJws = Jwts.parser()
+            final Claims body = Jwts.parserBuilder()
                     .setSigningKey(jwtConfig.getKey())
-                    .parseClaimsJws(token);
-
-            final Claims body = claimsJws.getBody();
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
 
             final String username = body.getSubject();
 

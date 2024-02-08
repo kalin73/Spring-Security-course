@@ -9,8 +9,8 @@ import org.example.seccourse.service.AuthenticationUserService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -23,13 +23,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import static org.example.seccourse.model.enums.Role.STUDENT;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
+    private final UserRepository userRepository;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration config, JwtConfig jwtConfig) throws Exception {
-        httpSecurity.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationManager(config), jwtConfig))
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtConfig jwtConfig) throws Exception {
+        httpSecurity.addFilter(new JwtUsernamePasswordAuthenticationFilter(authenticationProvider(), jwtConfig))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/", "/login").permitAll()
@@ -54,7 +55,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    UserDetailsService userDetailsService(UserRepository userRepository) {
+    UserDetailsService userDetailsService() {
 //        UserDetails student = User.builder()
 //                .username("Kalin")
 //                .password(passwordEncoder().encode("123"))
@@ -87,8 +88,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+        return authenticationProvider;
     }
 
 }

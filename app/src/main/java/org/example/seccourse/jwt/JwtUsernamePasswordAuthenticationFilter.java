@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.seccourse.model.dto.UsernamePasswordAuthenticationRequest;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +19,7 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationProvider authenticationProvider;
     private final JwtConfig jwtConfig;
 
     @Override
@@ -33,7 +33,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
                     authenticationRequest.getPassword()
             );
 
-            return authenticationManager.authenticate(authentication);
+            return authenticationProvider.authenticate(authentication);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
